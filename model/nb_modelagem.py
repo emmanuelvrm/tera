@@ -98,6 +98,7 @@ with st.form("formulario"):
         st.write('Generos:', *gens, sep=" ")
         st.write('Transmissões: ',df_selecao['Transmissões'][0])
         #st.write(df_selecao)
+        st.markdown("""---""")
         st.write('\n\n')
     except:
       st.write("Execute novamente")
