@@ -19,9 +19,9 @@ import streamlit as st
 ##Puxando as bases de dados
 st.write('Iniciando aplicação...')
 
-df_geral = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/df_geral.csv')
-df_games = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/df_games.csv')
-df_game_streams = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/df_game_streams.csv')
+df_geral = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_geral.csv')
+df_games = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_games.csv')
+df_game_streams = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_game_streams.csv')
 
 # Recomendação"""
 
