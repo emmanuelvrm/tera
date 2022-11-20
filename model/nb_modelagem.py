@@ -93,7 +93,11 @@ with st.form("formulario"):
         ajuste.rename(columns={'ajuste' : 'descarte'}, inplace=True)
         ajuste.drop(['descarte'],axis=1,inplace=True)
         df_selecao = ajuste
-        st.write(df_selecao)
+        df_selecao = ajuste
+        gens = df_selecao['Genero'][:].to_list()
+        st.write('Generos:', *gens, sep=" ")
+        st.write('Transmissões: ',df_selecao['Transmissões'][0])
+        #st.write(df_selecao)
         print()
     except:
       st.write("Execute novamente")
