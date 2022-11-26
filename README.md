@@ -94,19 +94,49 @@ Por definição, nós iremos criar um sistema de recomendação para os streamer
 + Como partimos do princípio que o usuário já possui conta e vods existentes na twitch, não teremos a possibilidade de um cold start.
 Por definição, iremos oferecer recomendações para streamers já cadastrados na plataforma e que já tenham pelo menos 1 vod de 30 minutos ou mais na plataforma.
 
+## Como nosso modelo foi desenhado?
 Para determinar a semelhança entre um jogo e outro iremos usar a feature de gênero dos jogos do dataset do IGDB (coluna genre_name).
 
 Nosso modelo consiste em contar quais os top gêneros mais jogados pelo streamer e escolher aleatoriamente 10 jogos desses mesmos gêneros que não tenham sido jogados pelo streamer.
 
-Nosso modelo foi testado manualmente após seu deploy na nuvem
-![alt text](https://miro.medium.com/max/480/1*PiGMYnvmpI62OpKeeZrsQA.gif)
+Não usamos uma biblioteca definida, nosso modelo foi escrito do zero o que nos dificulta na avaliação de métricas da qualidade dele. Por isso fizemos avaliações qualitativas baseadas em streamers que nós mesmos temos o costume de acompanhar.
 
-Modelo em funcionamento após deploy na nuvem
+Exemplo de avaliação em que o modelo fez boas recomendações
+### BananaTrama
 
-Você pode conferir nosso modelo em funcionamento <a href='https://emmanuelvrm-tera-modelnb-modelagem-vnkl9k.streamlit.app/'>aqui.
+Exemplo de jogos que costuma jogar: Cult of the Lamb, Project Zomboid, Vampire Survivors, Fallout 4, The Binding of Isaac: Repentance.
+
+Top 2 gêneros: Indie, Role Play Gaming (RPG)
+
+Exemplo de jogos recomendados: Dark fantasy warriors, Ski Hard: Lorsbruck 1978, Red island, FootRock, Sand Bullets.
+
+Nas recomendações realizadas o modelo conseguiu distinguir bem quais os gêneros de preferência e foi fácil selecionar jogos desses gêneros que fossem similares aos gostos e personalidade do streamer.
+
+### Exemplo de avaliação em que o modelo não fez boas recomendações
+DEUSDAGUERRARodrigo
+
+Exemplos de jogos que costuma jogar: God of War II, God of War III, God of War Ragnarok, Dragon Ball Z: Kakarot, Resident Evil 4
+
+Exemplos de jogos recomendados por nosso modelo: Bowmasters, Mickey Mouse, Farm under fire, Super mario bros galaxy ds, Mafia III
+
+Essa avaliação mostra que o modelo poderia se beneficiar de melhorias para as recomendações além de apenas os top gêneros do streamer. As recomendações não seguem a personalidade do streamer ao trazer jogos para público mais infantil, mesmo que o streamer tenha um jogo “cartunesco” em seu repertório, que na verdade é um jogo de luta. Existe uma diferença que nós humanos conseguimos perceber entre jogos de luta temáticos e jogos infantis, mas que não conseguimos trazer ao modelo.
+
+## E se continuássemos a melhorar o modelo, o que faríamos?
+Trazer outras features que ajudariam o modelo a fazer seleções melhores, como:
++ Classificação indicativa;
++ Plataformas (não é todo mundo que tem um Nintendo Switch, por exemplo);
++ Feedbacks dos usuários
+
+Testes dos hiperparâmetros
++ Usar os top 2 gêneros é suficiente?
++ Levar em consideração um tempo de histórico maior? Ou menor?
 
 ## Desafios e lições aprendidas
+Uma boa definição de contexto e elaboração do problema faz toda a diferença na hora de definir a melhor solução possível;
+Nós levamos meses para conseguir definir nosso contexto e escopo do projeto e, mesmo assim, mudamos várias vezes ao longo do curso.
 
-+ Uma boa definição de contexto e elaboração do problema faz toda a diferença na hora de definir a melhor solução possível;
-+ Não podemos abraçar todos os problemas de uma vez só, precisamos escolher bem por onde começar. Simplificar o problema e a solução é um bom começo;
-+ A coleta de dados pode ser difícil se você não sabe onde eles estão, uma boa pesquisa é a chave se você depende de dados públicos na internet.
+Não podemos abraçar todos os problemas de uma vez só, precisamos escolher bem por onde começar. Simplificar o problema e a solução é um bom começo;
+Nas primeiras definições de contexto e problemas, queríamos trazer uma ferramenta super personalizada e que trouxesse a resolução de vários problemas. Tivemos que reduzir drasticamente o escopo para conseguirmos focar em entregar uma ferramenta simples, mas com bom índice de qualidade.
+
+A coleta de dados pode ser difícil se você não sabe onde eles estão, uma boa pesquisa é a chave se você depende de dados públicos na internet.
+Tivemos sorte de encontrar uma plataforma que agregasse todas as informações de jogos em um só lugar e que fosse simples de acessar sua API e usar seus dados no projeto. Imagina se ela não existisse? Ou se não tivéssemos encontrado ela? Teríamos feito o trabalho de agregar os dados nós mesmos.
