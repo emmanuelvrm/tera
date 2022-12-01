@@ -22,10 +22,18 @@ with st.spinner('Carregando...'):
   df_geral = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_geral.csv')
   df_games = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_games.csv')
   df_game_streams = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_game_streams.csv')
+  df_meta = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_games_rating.csv')
 
   # Recomendação"""
 
   # Dumificando o df de games
+  df_meta = df_meta[['name','rating','storyline']]
+  df_meta['rating'].fillna('Sem avaliação',inplace=True)
+  df_meta['storyline'].fillna('Sem descrição',inplace=True)
+  df_meta['name'] = df_meta['name'].str.lower()
+  df_meta.rename(columns={'name': 'game_name'}, inplace = True)
+  df_games= df_games.merge(df_meta,on='game_name')
+
   df_games_dum = pd.get_dummies(df_games,columns=['genre_name'])
 
   # Escolher um streamer
@@ -52,8 +60,8 @@ with st.form("formulario"):
     df_game_score.loc['total'] = df_game_score.sum()
 
     # Pega os 2 generos com maior peso da lista
-    genero_recomendado = [df_game_score.loc['total'].drop(['game_name','image_url']).sort_values(ascending=False).keys().to_list()[0]]
-    genero_recomendado.append(df_game_score.loc['total'].drop(['game_name','image_url']).sort_values(ascending=False).keys().to_list()[1])
+    genero_recomendado = [df_game_score.loc['total'].drop(['game_name','image_url','rating','storyline']).sort_values(ascending=False).keys().to_list()[0]]
+    genero_recomendado.append(df_game_score.loc['total'].drop(['game_name','image_url','rating','storyline']).sort_values(ascending=False).keys().to_list()[1])
 
     # Cria uma lista com todos os jogos destes gêneros
     jogos_possiveis = list(set(df_games[df_games['genre_name'] == genero_recomendado[0][11:]]['game_name']))
@@ -85,7 +93,7 @@ with st.form("formulario"):
     df_games_consulta.rename(columns={'streams' : 'Transmissões'}, inplace=True)
 
     #Ordenando colunas
-    df_games_consulta = df_games_consulta[['Jogo','Genero','Transmissões','image_url']]
+    df_games_consulta = df_games_consulta[['Jogo','Genero','Transmissões','image_url','rating','storyline']]
 
     # Completando os nulos
     df_games_consulta['Transmissões'].fillna(0, inplace=True)
@@ -96,7 +104,7 @@ with st.form("formulario"):
       st.markdown("""---""")
       for a in recomendados:
         col1, col2 = st.columns(2)
-        ajuste = df_games_consulta[df_games_consulta['Jogo'] == a].groupby(['Jogo','Genero','image_url'])['Transmissões'].value_counts().to_frame()
+        ajuste = df_games_consulta[df_games_consulta['Jogo'] == a].groupby(['Jogo','Genero','image_url','rating','storyline'])['Transmissões'].value_counts().to_frame()
         ajuste.rename(columns={'Transmissões' : 'ajuste'},inplace=True)
         ajuste = ajuste['ajuste'].to_frame().reset_index()
         ajuste.rename(columns={'ajuste' : 'descarte'}, inplace=True)
@@ -108,6 +116,8 @@ with st.form("formulario"):
           st.subheader(str(a).capitalize())
           st.write('Generos:', *gens, sep=",")
           st.write('Transmissões: ',df_selecao['Transmissões'][0])
+          st.write('Avaliação no IGDB: ',df_selecao['rating'][0])
+          st.write('Descrição: ',df_selecao['storyline'][0])
           st.write('')
           
         with col2:
