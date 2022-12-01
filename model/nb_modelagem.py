@@ -15,25 +15,30 @@ import pandas as pd
 import datetime as dt
 import random
 import streamlit as st
+import time
 
 ##Puxando as bases de dados
-st.write('Iniciando aplicação...')
+with st.spinner('Carregando...'):
+  df_geral = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_geral.csv')
+  df_games = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_games.csv')
+  df_game_streams = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_game_streams.csv')
 
-df_geral = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_geral.csv')
-df_games = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_games.csv')
-df_game_streams = pd.read_csv('https://raw.githubusercontent.com/emmanuelvrm/tera/main/data/df_game_streams.csv')
+  # Recomendação"""
 
-# Recomendação"""
+  # Dumificando o df de games
+  df_games_dum = pd.get_dummies(df_games,columns=['genre_name'])
 
-# Dumificando o df de games
-df_games_dum = pd.get_dummies(df_games,columns=['genre_name'])
+  # Escolher um streamer
+  streamers = list(set(df_geral['user_name'].to_list()))
+st.success('Pronto!')
 
-# Escolher um streamer
-streamers = list(set(df_geral['user_name'].to_list()))
+
 with st.form("formulario"):
   st.title('Recomendação de jogos baseado em VODs da Twitch')
-  st.write('Bem-vinde!\nSelecione sua pessoa streamer favorita da lista abaixo (não temos pessoas gringas na lista, sorry) e então iremos recomendar alguns jogos baseados nas suas vods salvas')
-
+  st.write('Bem-vindo!!!')
+  st.write('Selecione seu streamer favorita da lista abaixo')
+  st.write('Ainda não temos streamers gringos na lista, sorry :sweat_smile:')
+  st.write('Iremos recomendar alguns jogos baseados nas suas vods salvas')
   streamer = st.selectbox(
       'Escolha seu streamer favorito',
       (streamers))
@@ -84,12 +89,13 @@ with st.form("formulario"):
 
     # Completando os nulos
     df_games_consulta['Transmissões'].fillna(0, inplace=True)
-    #
+    
     #Exibindo recomendação de forma tabular
     try:
+      st.subheader("Recomendamos")
+      st.markdown("""---""")
       for a in recomendados:
-        st.write("Recomendamos :")
-        st.write(str(a).capitalize())
+        col1, col2 = st.columns(2)
         ajuste = df_games_consulta[df_games_consulta['Jogo'] == a].groupby(['Jogo','Genero','image_url'])['Transmissões'].value_counts().to_frame()
         ajuste.rename(columns={'Transmissões' : 'ajuste'},inplace=True)
         ajuste = ajuste['ajuste'].to_frame().reset_index()
@@ -98,13 +104,21 @@ with st.form("formulario"):
         df_selecao = ajuste
         df_selecao = ajuste
         gens = df_selecao['Genero'][:].to_list()
-        st.write('Generos:', *gens, sep="-")
-        st.write('Transmissões: ',df_selecao['Transmissões'][0])
-        st.write('')
-        st.image(df_selecao['image_url'][0])
-        #st.write(df_selecao)
-        
+        with col1:
+          st.subheader(str(a).capitalize())
+          st.write('Generos:', *gens, sep=",")
+          st.write('Transmissões: ',df_selecao['Transmissões'][0])
+          st.write('')
+          
+        with col2:
+          st.image(df_selecao['image_url'][0])
+          #st.write(df_selecao)
         st.markdown("""---""")
         st.write('\n\n')
+      st.write("Criticas? Sugestões? Manda pra gente!")
+      st.write("Emmanuel: https://www.linkedin.com/in/emmanuelvrm/")
+      st.write("Italo: https://www.linkedin.com/in/italogsr/")
+      st.write("Kamis: https://www.linkedin.com/in/kamila-fernandes/")
+      st.write("Nilton: https://www.linkedin.com/in/nssiqueiraneto/")
     except:
       st.write("Execute novamente")
