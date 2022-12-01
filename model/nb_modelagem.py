@@ -31,6 +31,9 @@ df_games_dum = pd.get_dummies(df_games,columns=['genre_name'])
 # Escolher um streamer
 streamers = list(set(df_geral['user_name'].to_list()))
 with st.form("formulario"):
+  st.title('Recomendação de jogos baseado em VODs da Twitch')
+  st.write('Bem-vinde!\nSelecione sua pessoa streamer favorita da lista abaixo (não temos pessoas gringas na lista, sorry) e então iremos recomendar alguns jogos baseados nas suas vods salvas')
+
   streamer = st.selectbox(
       'Escolha seu streamer favorito',
       (streamers))
@@ -44,8 +47,8 @@ with st.form("formulario"):
     df_game_score.loc['total'] = df_game_score.sum()
 
     # Pega os 2 generos com maior peso da lista
-    genero_recomendado = [df_game_score.loc['total'].drop('game_name').sort_values(ascending=False).keys().to_list()[0]]
-    genero_recomendado.append(df_game_score.loc['total'].drop('game_name').sort_values(ascending=False).keys().to_list()[1])
+    genero_recomendado = [df_game_score.loc['total'].drop(['game_name','image_url']).sort_values(ascending=False).keys().to_list()[0]]
+    genero_recomendado.append(df_game_score.loc['total'].drop(['game_name','image_url']).sort_values(ascending=False).keys().to_list()[1])
 
     # Cria uma lista com todos os jogos destes gêneros
     jogos_possiveis = list(set(df_games[df_games['genre_name'] == genero_recomendado[0][11:]]['game_name']))
@@ -77,7 +80,7 @@ with st.form("formulario"):
     df_games_consulta.rename(columns={'streams' : 'Transmissões'}, inplace=True)
 
     #Ordenando colunas
-    df_games_consulta = df_games_consulta[['Jogo','Genero','Transmissões']]
+    df_games_consulta = df_games_consulta[['Jogo','Genero','Transmissões','image_url']]
 
     # Completando os nulos
     df_games_consulta['Transmissões'].fillna(0, inplace=True)
@@ -87,7 +90,7 @@ with st.form("formulario"):
       for a in recomendados:
         st.write("Recomendamos :")
         st.write(str(a).capitalize())
-        ajuste = df_games_consulta[df_games_consulta['Jogo'] == a].groupby(['Jogo','Genero'])['Transmissões'].value_counts().to_frame()
+        ajuste = df_games_consulta[df_games_consulta['Jogo'] == a].groupby(['Jogo','Genero','image_url'])['Transmissões'].value_counts().to_frame()
         ajuste.rename(columns={'Transmissões' : 'ajuste'},inplace=True)
         ajuste = ajuste['ajuste'].to_frame().reset_index()
         ajuste.rename(columns={'ajuste' : 'descarte'}, inplace=True)
@@ -95,11 +98,13 @@ with st.form("formulario"):
         df_selecao = ajuste
         df_selecao = ajuste
         gens = df_selecao['Genero'][:].to_list()
-        st.write('Generos:', *gens, sep=" ")
+        st.write('Generos:', *gens, sep="-")
         st.write('Transmissões: ',df_selecao['Transmissões'][0])
+        st.write('')
+        st.image(df_selecao['image_url'][0])
         #st.write(df_selecao)
+        
         st.markdown("""---""")
         st.write('\n\n')
     except:
       st.write("Execute novamente")
-
