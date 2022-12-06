@@ -3,6 +3,8 @@
 Sistema de recomendação de jogos para streamers da Twitch
 Esse artigo foi escrito como parte do projeto final do curso de Data Science & Machine Learning da Tera. Integrantes: Emmanuel Martins, Ítalo Ribeiro, Kamila Fernandes e Nilton Neto
 
+Link do App: https://emmanuelvrm-tera-modelnb-modelagem-vnkl9k.streamlit.app/
+
 ## Contexto
 
 Desde os primórdios da indústria do entretenimento interativo nos anos 50, os jogos eletrônicos vêm invadindo a vida das pessoas. Com o avanço da tecnologia, a popularização dos consoles de mesa e microcomputadores aumentou exponencialmente nos anos 90, dando início a muitas franquias multimilionárias e evidenciando a oportunidades desse novo nicho de mercado. Só em 2007 o lucro deste setor foi de US$9,5 bilhões, ultrapassando a indústria cinematográfica. E acelerada pela popularização dos smartphones nos últimos anos, hoje ultrapassa os US$200 bilhões, superando o mercado de filmes e música somados, com perspectivas de constante crescimento.
